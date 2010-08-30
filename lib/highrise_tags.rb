@@ -5,11 +5,11 @@ module HighriseTags
   tag "highrise-contact" do |tag|
     view = response.template
     view.controller.include_javascript 'highrise_contact'
-    view.controller.include_stylesheet 'highrise_contact'
+    view.controller.include_stylesheet 'highrise_contact'    
     response.template.render :partial => 'shared/highrise_contact.html', :locals =>
     {:contact_type => tag.attr['contact_type'],
      :task_subject=>tag.attr['task_subject'],
-     :tags=>(tag.attr['tags']|"").split(','),
+     :tags=>(tag.attr['tags']||"").split(','),
      :settings=>HighriseSetting.first,
      :show_additional_info=>tag.attr['show_additional_info'],
      :system_note=>tag.attr['system_note'],
