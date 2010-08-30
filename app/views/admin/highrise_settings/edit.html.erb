@@ -1,0 +1,78 @@
+<style type="text/css">
+
+    .fieldWithErrors {
+      padding: 2px;
+      background-color: red;
+      display: table;
+    }
+
+    #errorExplanation {
+      width: 400px;
+      border: 2px solid red;
+      padding: 7px;
+      padding-bottom: 12px;
+      margin-bottom: 20px;
+      background-color: #f0f0f0;
+    }
+
+    #errorExplanation h2 {
+      text-align: left;
+      font-weight: bold;
+      padding: 5px 5px 5px 15px;
+      font-size: 12px;
+      margin: -7px;
+      background-color: #c00;
+      color: #fff;
+    }
+
+    #errorExplanation p {
+      color: #333;
+      margin-bottom: 0;
+      padding: 5px;
+    }
+
+    #errorExplanation ul li {
+      color: #333;
+      margin-left: 20px;
+      font-size: 12px;
+      list-style: square;
+    }
+  
+</style>
+
+<h1>Highrise Contact</h1>
+
+<% form_tag :controller=>"highrise_settings", :action => "edit" do %>
+    <%= error_messages_for :highrise_setting %>
+    <%= hidden_field(:highrise_setting, :id) unless @highrise_setting.id.nil? %>
+     <h2>Step 1</h2>
+    <p>Enter your authentication token and company subdomain from Highrise then press Save Changes.</p>
+    <p>
+    <label for="authentication_token">Authentication Token</label>
+    <%= text_field :highrise_setting, :authentication_token, :maxlength => 64 %>
+</p>
+    <p>
+        <label for="subdomain">Subdomain</label>
+    <%= text_field :highrise_setting, :subdomain, :maxlength => 64 %>
+        <br/>
+</p>    
+
+     <h2>Optional Step 2</h2>
+    <p>Select a default task category and task owner for any forms that assign a task.</p>
+    <p>
+    <p>        <label for="task_category">Default Task Category</label>
+    <%= select(:highrise_setting, :task_category, @task_categories, {:include_blank => true}) %>
+        <br/>
+       </p>
+    <p> <label for="task_owner">Default Task Owner</label>
+    <%= select(:highrise_setting, :task_owner, @task_owners, {:include_blank => true}) %>
+
+            <br/>
+      </p>
+    <p class='buttons'>
+            <input accesskey="S" class="button" name="commit" type="submit" value="Save Changes" />
+            or
+            <a href="http://dev.whewer-3.voomify.loc:3000/admin">Cancel</a>
+          </p>
+<% end %>
+

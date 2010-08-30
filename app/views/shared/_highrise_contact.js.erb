@@ -1,0 +1,53 @@
+<script type="text/javascript">
+
+function verifyRequired(){
+    $("#error_box").empty();
+    var validationSuccess = true;
+    jQuery('#contact_type_tag,#subject,#phone,#first_name,#last_name,#email,#message').each( function(index, inputElem) {
+     try{
+        // this == inputElem
+        $(this).next().text('');
+        if( $(this).is(':visible') &&  ($(this).val() == "" || $(this).val() == '-Please Select One-')) {
+           validationSuccess = false;
+          $(this).next().text('Missing required field');
+        }
+      }
+      catch(e){ alert("Exception Caught [" + e + "]"); }
+    });
+
+    if( !validationSuccess ) {
+       $("#error_box").show().append("<h5 class='required_field'>Missing Required Fields</h5><p>One or more required fields are missing. Please provide the required information so that we can complete your request.</p>");
+    }
+    return validationSuccess;
+}
+
+function onProspectTypeChange(){
+
+        $('#tag_0').val($('#contact_type').val());
+        $('#task_body').val('New '+ $('#contact_type').val());
+
+        if($('#contact_type').val() == '<%= ContactUsForm::WEB_SUPPORT %>'){
+            $('#subject_block').show();
+            $('#subject').show();
+            $('#additional_info1').hide();
+            $('#additional_info2').hide();
+        }else if($('#contact_type').val() == '<%= ContactUsForm::WEB_RETAIL_LEAD %>'){
+            $('#subject_block').hide();
+            $('#subject').hide();
+            $('#additional_info1').show();
+            $('#additional_info2').show();
+        // web lead
+        }else{
+            $('#subject_block').hide();
+            $('#subject').hide();
+            $('#additional_info1').hide();
+            $('#additional_info2').hide();
+        }
+    }       
+
+$(document).ready(function(){
+   $('error_box').hide();
+   onProspectTypeChange();
+})
+
+</script>
