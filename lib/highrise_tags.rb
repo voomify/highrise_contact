@@ -7,7 +7,16 @@ module HighriseTags
     view.controller.include_javascript 'highrise_contact'
     view.controller.include_stylesheet 'highrise_contact'
     response.template.render :partial => 'shared/highrise_contact.html', :locals =>
-    {:contact_type => tag.attr['contact_type'], :settings=>HighriseSetting.first}
+    {:contact_type => tag.attr['contact_type'],
+     :task_subject=>tag.attr['task_subject'],
+     :tags=>(tag.attr['tags']|"").split(','),
+     :settings=>HighriseSetting.first,
+     :show_additional_info=>tag.attr['show_additional_info'],
+     :system_note=>tag.attr['system_note'],
+     :return_url=>tag.attr['return_url'],
+     :error_url=>tag.attr['error_url'],
+     :button_text=>tag.attr['button_text']
+    }
   end
 end
 

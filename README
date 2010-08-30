@@ -1,3 +1,68 @@
 = Highrise Contact
 
-Description goes here
+This is a radiant extension that allows you to hookup a contact form and submit the form to a highrise account.
+
+To Install:
+
+This extension is not registered with the radiant extension site, so you must install it manually.
+
+Here is more information on how to install an extension manually: http://github.com/radiant/radiant/wiki/installing-extensions
+
+Usage:
+
+Once installed you need to set your highrise authentication token and company subdomain.  The extension adds a settings
+tab that you can enter those values.  You can optionally also specify the user and task category that you want tasks
+assigned to.
+
+On one of your pages you need to include the following tag:
+<r:highrise-contact />
+
+This will create a form for you to submit contact information to highrise.  (Yes it really is that easy.)
+
+
+If the contact exists (by email) then we ignore the contact fields and load the contact already in Highrise.
+If the contact does not exist (by email) then we add it with all the provided contact information.
+
+What fields and how it is put into highrise is affected by the contact_type parameter: There are four variations on the forms that you can use.
+
+# this causes the form to create a web support case and a task on the case
+  WEB_SUPPORT = "Web Support"
+  # this causes the form to create a web lead and a task on the person or address if provided
+  WEB_LEAD = "Web Lead"
+  # this causes the form to create a retail lead and a task on the person or address if provided
+  WEB_RETAIL_LEAD = "Retail Lead"
+  # this causes the form to simply put the user into highrise and tag them as Web Opt In
+  WEB_OPT_IN = "Web Opt In"
+
+<r:highrise-contact contact_type='select_type' />
+      This will provide a drop down with "Existing Customer" or "Prospective Customer" in it
+      If the users chooses Existing Customer then then it will behave as Web Support below.
+      If the users chooses Prospective Customer then then it will behave as 'Web Lead' below.
+      Note: You can not set the task subject when you chose this contact type.
+
+<r:highrise-contact contact_type='Web Support' />
+      This will create highrise case with the description as a note on the case and a task for the case
+      The contact will be tagged 'Web Support'
+
+<r:highrise-contact contact_type='Web Lead' />
+      This will create highrise note on the contact and a task for the contact.
+      The contact will be tagged 'Web Lead'
+
+<r:highrise-contact contact_type='Web Opt In' />
+      This will create a highrise contact with a tag 'Web OptIn
+
+<r:highrise-contact task_subject='Please followup'/>
+      You can optionally set the task subject by passing task_subject. (Applies only to Support and Lead types.)
+
+<r:highrise-contact system_note="A note that will be added to the contact"/>
+    You can optionally set a note on a support or lead.
+
+<r:highrise-contact system_note="A note that will be added to the contact"/>
+show_additional_info
+return_url
+button_text
+
+ You can optionally set any highrise tags you want by passing them:
+ These will be set either on the person or the address if provided
+ <r:highrise-contact tags='Tag1,Tag2'/>
+ If you provide tags then the default tags for the contact_type will NOT be set. (The default tag is the same as the contact_type.)

@@ -1,38 +1,40 @@
 <%= render :partial => 'shared/highrise_contact.js' %>
 <%
-#
-# Using this partial:
-# This is our one stop shopping contact form partial
-# It will put the collected contact into highrise
-# If the contact exists (by email) then we ignore the contact fields and load the contact already in Highrise.
-# If the contact does not exist (by email) then we add it with all the provided contact information.
-# What fields and how it is put into highrise is affected by the contact_type parameter:
-# contact_type
-#   ContactUsForm::WEB_SELECT_TYPE ('Lead Or Support')
-#       This will provide a drop down with "Existing Customer" or "Prospective Customer" in it
-#       If the users chooses Existing Customer then then it will behave as Web Support below.
-#       If the users chooses Prospective Customer then then it will behave as 'Web Lead' below.
-#       Note: You can not set the task subject when you chose this contact type.
-#   ContactUsForm::WEB_SUPPORT ('Web Support')
-#       This will create highrise case with the description as a note on the case and a task for the case
-#       The contact will be tagged 'Web Support'
-#
-#   ContactUsForm::WEB_LEAD ('Web Lead')
-#       This will create highrise note on the contact and a task for the contact.
-#       The contact will be tagged 'Web Lead'
-#   ContactUsForm::WEB_OPT_IN 'Web Opt In'
-#       This will create a highrise contact with a tag 'Web OptIn
-#
-#  You can optionally set the task subject by passing:
-#    task_subject to this partial.
-#
-#  You can optionally set any tags you want by passing
-#  These will be set either on the person or the address if provided
-#  :tags => ["tag1","tag2"]
-#  If you provide tags then the default tags for the contact_type will NOT be set
-#  The only exception is the
+   #
+   # Using this partial:
+   # This is our one stop shopping contact form partial
+   # It will put the collected contact into highrise
+   # If the contact exists (by email) then we ignore the contact fields and load the contact already in Highrise.
+   # If the contact does not exist (by email) then we add it with all the provided contact information.
+   # What fields and how it is put into highrise is affected by the contact_type parameter:
+   # contact_type
+   #   ContactUsForm::WEB_SELECT_TYPE ('Lead Or Support')
+   #       This will provide a drop down with "Existing Customer" or "Prospective Customer" in it
+   #       If the users chooses Existing Customer then then it will behave as Web Support below.
+   #       If the users chooses Prospective Customer then then it will behave as 'Web Lead' below.
+   #       Note: You can not set the task subject when you chose this contact type.
+   #   ContactUsForm::WEB_SUPPORT ('Web Support')
+   #       This will create highrise case with the description as a note on the case and a task for the case
+   #       The contact will be tagged 'Web Support'
+   #
+   #   ContactUsForm::WEB_LEAD ('Web Lead')
+   #       This will create highrise note on the contact and a task for the contact.
+   #       The contact will be tagged 'Web Lead'
+   #   ContactUsForm::WEB_OPT_IN 'Web Opt In'
+   #       This will create a highrise contact with a tag 'Web OptIn
+   #
+   #  You can optionally set the task subject by passing:
+   #    task_subject to this partial.
+   #
+   #  You can optionally set any tags you want by passing
+   #  These will be set either on the person or the address if provided
+   #  :tags => ["tag1","tag2"]
+   #  If you provide tags then the default tags for the contact_type will NOT be set.
 %>
+
 <%
+   action = "/highrise/create"
+
    # if tags are passed then we are all good.
    # Else we default the tag
    tags = [] if local_assigns[:tags].nil?
@@ -40,120 +42,111 @@
        tags << contact_type
    end
 
-   contact_type = ContactUsForm::WEB_LEAD if local_assigns[:contact_type].nil?
-   system_note = "" if local_assigns[:system_note].nil?
-   action = "/highrise/create"
-   header = local_assigns[:header]
-   description = local_assigns[:description]
-   show_additional_info = local_assigns[:show_additional_info]
-   return_url = "/" if local_assigns[:return_url].nil?
-   button_text = "Submit" if local_assigns[:button_text].nil?   
+   contact_type = ContactUsForm::WEB_LEAD if local_assigns[:contact_type].nil? && !contact_type
+   system_note = "" if local_assigns[:system_note].nil? && !system_note
+   show_additional_info = local_assigns[:show_additional_info] && !show_additional_info
+   return_url = "/" if local_assigns[:return_url].nil? && !return_url
+   error_url = "/" if local_assigns[:error_url].nil? && !error_url
+   button_text = "Submit" if local_assigns[:button_text].nil? && !button_text
 
    # You can pass task_subject and this will be the subject for the task
-   task_subject = nil if local_assigns[:task_subject].nil?
-      unless task_subject
+   task_subject = nil if local_assigns[:task_subject].nil? && !!task_subject
+   unless task_subject
        task_subject = "New "+contact_type
    end
 %>
 
 <div>
-    <% if header %>
-    <h1><%= header %> </h1>
-    <% end %>
-    <% if description %>
-    <p class="pageText">
-        <%= description %>
-    </p>
-    <% end %>      
+  <div style="display: none;" id="error_box" class="special"></div>
+  <form id="clientform" action="<%= action %>" method="post" onsubmit="return verifyRequired();">
+    <fieldset>
+      <p>Please <span class="highlighter">fill in and submit</span> the form below and we will contact you by phone or
+        email. Required fields are indicated by the red star (<span class="required_field">*</span>):</p>
+      <% if contact_type == ContactUsForm::WEB_SELECT_TYPE %>
+          <span class="required_field">*</span>I am:<br/>
+          <select id="contact_type" name="contact_type" title="Lead Type" onchange="onProspectTypeChange();">
+            <option value="">-Please Select One-</option>
+            <option value="<%= ContactUsForm::WEB_LEAD %>">A Prospective Customer</option>
+            <option value="<%= ContactUsForm::WEB_SUPPORT %>">An Existing Customer</option>
+            <option value="<%= ContactUsForm::WEB_RETAIL_LEAD %>">A Prospective Retailer</option>
+          </select>
+          <span id="error_tag" class="required_error_msg"></span><br/>
+      <% else %>
+          <input type="hidden" name="contact_type" value="<%= contact_type %>"/>
+      <% end %>
+
+      <% tags.each_with_index do |tag, index| %>
+          <input id="<%= 'tag_'+index.to_s %>" type="hidden" name="tags[]" value="<%= tag %>"/>
+      <% end %>
+
+      <span class="required_field">*</span>First Name:<br/>
+      <input maxlength="40" size="20" type="text" id="first_name" name="person[first_name]"/>
+      <span id="error_first_name" class="required_error_msg"></span><br/>
+
+      <span class="required_field">*</span>Last Name:<br/>
+      <input maxlength="40" size="20" type="text" id="last_name" name="person[last_name]"/>
+      <span id="error_last_name" class="required_error_msg"></span><br/>
+
+      <div id="additional_info1" style="<%= 'display:none;' unless show_additional_info %>">
+        Company:<br/>
+        <input maxlength="40" size="20" id="company_name" name="person[company_name]" type="text"/><br/>
+
+        Title:<br/>
+        <input maxlength="40" size="20" id="title" name="person[title]" type="text"/><br/>
+      </div>
+
+      <span class="required_field">*</span>Email:<br/>
+      <input maxlength="80" size="20" type="text" id="email" name="person[contact_data][email_addresses][email_address][address]"/>
+      <span id="error_email" class="required_error_msg"></span><br/>
+
+      <input type="hidden" name="person[contact_data][email_addresses][email_address][location]" value="Work"/>
+
+      <span class="required_field">*</span>Phone:<br/>
+      <input maxlength="40" size="20" id="phone" name="person[contact_data][phone_numbers][phone_number][number]" type="text"/>
+      <span id="error_phone" class="required_error_msg"></span><br/>
+
+      <input type="hidden" name="person[contact_data][phone_numbers][phone_number][location]" value="Work"/>
+
+      <div id="additional_info2" style="<%= 'display:none;' unless show_additional_info %>">
+        <%= render :partial => 'shared/additional_info_fields' %>
+      </div>
+      <% if contact_type != ContactUsForm::WEB_OPT_IN %>
+          <div id="subject_block">
+            <span class="required_field">*</span>Subject:<br/>
+            <input maxlength="40" size="20" id="subject" name="kase[name]" type="text"/>
+            <span id="error_subject" class="required_error_msg"></span><br/><br/>
+          </div>
+
+          <div id="message_block" style="<%= "display:none;" if contact_type == 'optin' %>">
+            <span class="required_field">*</span>Message:<br/>
+            <textarea name="note[body]" id="message" cols="65" rows="8"></textarea>
+            <span id="error_body" class="required_error_msg"></span><br/>
+          </div>
+          <input type="hidden" name="note[subject_type]" value="Party"/>
+
+          <% unless system_note.blank? %>
+              <textarea style="visibility:hidden" id="system_note[body]" name="system_note[body]"><%= system_note %></textarea>
+          <% end %>
+
+          <input type="hidden" id='task_body' name="task[body]" value="<%= task_subject %>"/>
+          <input type="hidden" name="task[frame]" value="today"/>
+          <input type="hidden" name="task[subject_type]" value="Party"/>
+          <input type="hidden" name="task[category_id]" value="<%= settings.task_category %>"/>
+          <input type="hidden" name="task[public]" value="true"/>
+
+          <%# Who should own this task? %>
+          <input type="hidden" name="task[owner_id]" value="<%= settings.task_owner %>"/>
+          <br/>
+      <% end %>
+
+      <%#= honeypot -%>
 
 
-    <div style="display: none;" id="error_box" class="special"></div>
-    <form id="clientform" action="<%= action %>" method="post" onsubmit="return verifyRequired();">
-        <fieldset>
-          <p>Please <span class="highlighter">fill in and submit</span> the form below and we will contact you by phone or email. Required fields are indicated by the red star (<span class="required_field">*</span>):</p>
-            <% if contact_type == ContactUsForm::WEB_SELECT_TYPE %>
-              <span class="required_field">*</span>I am:<br/>
-              <select id="contact_type" name="contact_type" title="Lead Type" onchange="onProspectTypeChange();">
-                  <option value="">-Please Select One-</option>
-                  <option value="<%= ContactUsForm::WEB_LEAD %>">A Prospective Customer</option>
-                  <option value="<%= ContactUsForm::WEB_SUPPORT %>">An Existing Customer</option>
-                  <option value="<%= ContactUsForm::WEB_RETAIL_LEAD %>">A Prospective Retailer</option>
-              </select>
-              <span id="error_tag" class="required_error_msg"></span><br/>
-            <% else %>
-                <input type="hidden" name="contact_type" value="<%= contact_type %>" />
-            <% end %>
+      <input type="hidden" name="return_url" value="<%= return_url %>"/>
+      <input type="hidden" name="error_url" value="<%= error_url %>"/>
 
-             <% tags.each_with_index do |tag, index| %>
-                <input id = "<%= 'tag_'+index.to_s%>" type="hidden" name="tags[]" value="<%= tag %>" />
-             <% end %>
-
-            <span class="required_field">*</span>First Name:<br/>
-            <input maxlength="40" size="20" type="text" id="first_name" name="person[first_name]" />
-            <span id="error_first_name" class="required_error_msg"></span><br/>
-
-            <span class="required_field">*</span>Last Name:<br/>
-            <input maxlength="40" size="20" type="text" id="last_name" name="person[last_name]" />
-            <span id="error_last_name" class="required_error_msg"></span><br/>
-
-            <div id="additional_info1" style="<%= 'display:none;' unless show_additional_info %>">
-                Company:<br/>
-                <input maxlength="40" size="20" id="company_name" name="person[company_name]" type="text" /><br/>
-
-                Title:<br/>
-                <input maxlength="40" size="20" id="title" name="person[title]" type="text" /><br/>
-            </div>
-
-            <span class="required_field">*</span>Email:<br/>
-            <input maxlength="80" size="20" type="text" id="email" name="person[contact_data][email_addresses][email_address][address]" />
-            <span id="error_email" class="required_error_msg"></span><br/>
-
-          <input type="hidden" name="person[contact_data][email_addresses][email_address][location]" value="Work" />
-
-          <span class="required_field">*</span>Phone:<br/>
-          <input maxlength="40" size="20" id="phone" name="person[contact_data][phone_numbers][phone_number][number]" type="text" />
-          <span id="error_phone" class="required_error_msg"></span><br/>
-
-          <input type="hidden" name="person[contact_data][phone_numbers][phone_number][location]" value="Work" />
-
-            <div id="additional_info2" style="<%= 'display:none;' unless show_additional_info %>">
-                <%= render :partial => 'shared/additional_info_fields' %>
-            </div>
-            <% if contact_type != ContactUsForm::WEB_OPT_IN %>
-                <div id="subject_block">
-                    <span class="required_field">*</span>Subject:<br/>
-                    <input maxlength="40" size="20" id="subject" name="kase[name]" type="text" />
-                    <span id="error_subject" class="required_error_msg"></span><br/><br/>
-                </div>
-
-                <div id="message_block" style="<%= "display:none;" if contact_type == 'optin'%>">
-                    <span class="required_field">*</span>Message:<br/>
-                    <textarea name="note[body]" id="message" cols="65" rows="8"></textarea>
-                    <span id="error_body" class="required_error_msg"></span><br/>
-                </div>
-                <input type="hidden" name="note[subject_type]" value="Party" />
-
-                <% unless system_note.blank? %>
-                    <textarea style="visibility:hidden" id="system_note[body]" name="system_note[body]"><%=system_note%></textarea>
-                <% end %>
-
-                <input type="hidden" id ='task_body' name="task[body]" value="<%=task_subject%>" />
-                <input type="hidden" name="task[frame]" value="today" />
-                <input type="hidden" name="task[subject_type]" value="Party" />
-                <input type="hidden" name="task[category_id]" value="<%= settings.task_category %>" />
-                <input type="hidden" name="task[public]" value="true" />
-
-                <%# Who should own this task? %>
-                <input type="hidden" name="task[owner_id]" value="<%= settings.task_owner %>" />
-                <br/>
-            <% end %>
-
-            <%#= honeypot -%>
-
-
-            <input type="hidden" name="return_url" value= "<%= return_url %>"/>
-            <input type="submit" name="Submit" value="<%= button_text %> " />
-        </fieldset>
-    </form>
-    <%= render :partial => 'shared/privacy_stmt' %>
+      <input type="submit" name="Submit" value="<%= button_text %>"/>
+    </fieldset>
+  </form>
+  <%= render :partial => 'shared/privacy_stmt' %>
 </div>

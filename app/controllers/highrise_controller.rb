@@ -85,7 +85,7 @@ class HighriseController < SiteController
       redirect_to params[:return_url]
     rescue => exception
       log_error(exception)
-      redirect_to :controller=>:site, :action=>:contact_error
+      redirect_to params[:error_url]
     end
   end
 

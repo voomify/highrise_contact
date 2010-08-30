@@ -24,7 +24,7 @@ class HighriseContactExtension < Radiant::Extension
 
   # See your config/routes.rb file in this extension to define custom routes
   
-  def activate        
+   def activate        
     Page.send :include, HighriseTags
     tab 'Settings' do
        add_item "Highrise Contact", "/admin/highrise_settings/edit", :after => "Users"
