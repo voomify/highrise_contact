@@ -8,6 +8,7 @@ module HighriseTags
     view.controller.include_stylesheet 'highrise_contact'    
     response.template.render :partial => 'shared/highrise_contact.html', :locals =>
     {:contact_type => tag.attr['contact_type'],
+     :form_instructions=>tag.attr['form_instructions'],
      :task_subject=>tag.attr['task_subject'],
      :tags=>(tag.attr['tags']||"").split(','),
      :settings=>HighriseSetting.first,

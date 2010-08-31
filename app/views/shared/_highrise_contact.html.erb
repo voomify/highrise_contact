@@ -48,6 +48,11 @@
    return_url = "/" if local_assigns[:return_url].nil? && !return_url
    error_url = "/" if local_assigns[:error_url].nil? && !error_url
    button_text = "Submit" if local_assigns[:button_text].nil? && !button_text
+   form_instructions = 'Please <span class="highlighter">fill in and submit</span> the form below '+
+           'and we will contact you by phone or email. Required fields are indicated by the red star '+
+           '(<span class="required_field">*</span>):' if local_assigns[:form_instructions].nil? && !form_instructions
+   privacy_statement = '* We respect your privacy. &nbsp;Your information will '+
+           'not be shared without your permission.' if  local_assigns[:privacy_statement].nil? && !privacy_statement
 
    # You can pass task_subject and this will be the subject for the task
    task_subject = nil if local_assigns[:task_subject].nil? && !!task_subject
@@ -60,8 +65,7 @@
   <div style="display: none;" id="error_box" class="special"></div>
   <form id="clientform" action="<%= action %>" method="post" onsubmit="return verifyRequired();">
     <fieldset>
-      <div id="form_instructions">Please <span class="highlighter">fill in and submit</span> the form below and we will contact you by phone or
-              email. Required fields are indicated by the red star (<span class="required_field">*</span>):</div>            
+      <div id="form_instructions"><%= form_instructions -%></div>
       <% if contact_type == ContactUsForm::WEB_SELECT_TYPE %>
           <span class="required_field">*</span>I am:<br/>
           <select id="contact_type" name="contact_type" title="Lead Type" onchange="onProspectTypeChange();">
@@ -146,7 +150,9 @@
       <input type="hidden" name="error_url" value="<%= error_url %>"/>
 
       <input type="submit" name="Submit" value="<%= button_text %>"/>
-      <%= render :partial => 'shared/privacy_stmt' %>
+      <p align="center" id ="privacy_text" class="privacy_text">
+        <%= privacy_statement %><br/>
+      </p>
     </fieldset>
   </form>
 </div>
