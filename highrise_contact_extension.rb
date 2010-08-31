@@ -3,7 +3,7 @@
 
 class HighriseContactExtension < Radiant::Extension
   version "1.0"
-  description "Highrse contact extension allows you to add a contact for that will write to highrise"
+  description "Highrse contact extension allows you to add a contact form that will write to highrise"
   url "http://github.com/voomify/highrise_contact"
 
   define_routes do |map|

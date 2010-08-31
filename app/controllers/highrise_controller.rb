@@ -19,7 +19,7 @@ class HighriseController < SiteController
   end
 
   def set_highrise_connection
-    [Highrise::Person, Highrise::Company, Highrise::Kase, Highrise::Note, Highrise::Task].each do |klass|
+    Highrise::Base.descendants.each do |klass|
       klass.site=settings.site
     end
   end
@@ -34,6 +34,7 @@ class HighriseController < SiteController
 
       # we find the person if they exist we do NOT overwrite any of their
       # data!
+      
       @person = Highrise::Person.find_by_email email
       unless @person
         @person = Highrise::Person.new(params[:person])

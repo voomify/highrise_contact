@@ -37,6 +37,10 @@ module Highrise
   
   class Base < ActiveResource::Base
     self.site = ENV['SITE']
+
+    def self.descendants
+      ObjectSpace.each_object(Class).select { |klass| klass < self }
+    end
   end
   
   # Abstract super-class, don't instantiate directly. Use Kase, Company, Person instead.
