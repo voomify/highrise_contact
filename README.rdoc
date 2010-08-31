@@ -53,7 +53,8 @@ What fields and how it is put into highrise is affected by the contact_type para
     Sets the error and return page urls.  Defaults to '/' for both.  These SHOULD be filled in espeically the error_url.
     Recommend that you provide some other means to contact you on the error page.
 
-<tt><r:highrise-contact form_instructions='Please <span class="highlighter">fill in and submit</span> the form below and we will contact you by phone or email. Required fields are indicated by the red star (<span class="required_field">*</span>):'/></tt>
+
+<tt><r:highrise-contact form_instructions="Please <span class='highlighter'>fill in and submit</span> the form below and we will contact you by phone or email. Required fields are indicated by the red star (<span class='required_field'>*</span>):"/></tt>
       Allows you to set the form instructions. 
 
 <tt><r:highrise-contact privacy_statement='* We respect your privacy. &nbsp;Your information will not be shared without your permission.'/></tt>
