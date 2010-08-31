@@ -34,6 +34,8 @@ What fields and how it is put into highrise is affected by the contact_type para
   # this causes the form to simply put the user into highrise and tag them as Web Opt In
   WEB_OPT_IN = "Web Opt In"
 
+* FORM TYPES *
+
 <r:highrise-contact contact_type='select_type' />
       This will provide a drop down with "Existing Customer" or "Prospective Customer" in it
       If the users chooses Existing Customer then then it will behave as Web Support below.
@@ -51,16 +53,23 @@ What fields and how it is put into highrise is affected by the contact_type para
 <r:highrise-contact contact_type='Web Opt In' />
       This will create a highrise contact with a tag 'Web OptIn
 
+* FORM OPTIONS *
+
+<r:highrise-contact return_url='/some_thank_you_page' error_url='/some_error_page'/>
+    Sets the error and return page urls.  Defaults to '/' for both.  These SHOULD be filled in espeically the error_url.
+    Recommend that you provide some other means to contact you on the error page.
+
 <r:highrise-contact task_subject='Please followup'/>
       You can optionally set the task subject by passing task_subject. (Applies only to Support and Lead types.)
 
 <r:highrise-contact system_note="A note that will be added to the contact"/>
     You can optionally set a note on a support or lead.
 
-<r:highrise-contact system_note="A note that will be added to the contact"/>
-show_additional_info
-return_url
-button_text
+<r:highrise-contact show_additional_info='true'/>
+    Additional info displays the fields:  street, city, state, zip and country
+
+<r:highrise-contact button_text='Send my info'/>
+   Changes the form submit button text.
 
  You can optionally set any highrise tags you want by passing them:
  These will be set either on the person or the address if provided
