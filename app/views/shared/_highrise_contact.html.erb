@@ -60,8 +60,8 @@
   <div style="display: none;" id="error_box" class="special"></div>
   <form id="clientform" action="<%= action %>" method="post" onsubmit="return verifyRequired();">
     <fieldset>
-      <p>Please <span class="highlighter">fill in and submit</span> the form below and we will contact you by phone or
-        email. Required fields are indicated by the red star (<span class="required_field">*</span>):</p>
+      <div id="form_instructions">Please <span class="highlighter">fill in and submit</span> the form below and we will contact you by phone or
+              email. Required fields are indicated by the red star (<span class="required_field">*</span>):</div>            
       <% if contact_type == ContactUsForm::WEB_SELECT_TYPE %>
           <span class="required_field">*</span>I am:<br/>
           <select id="contact_type" name="contact_type" title="Lead Type" onchange="onProspectTypeChange();">
@@ -146,7 +146,7 @@
       <input type="hidden" name="error_url" value="<%= error_url %>"/>
 
       <input type="submit" name="Submit" value="<%= button_text %>"/>
+      <%= render :partial => 'shared/privacy_stmt' %>
     </fieldset>
   </form>
-  <%= render :partial => 'shared/privacy_stmt' %>
 </div>
