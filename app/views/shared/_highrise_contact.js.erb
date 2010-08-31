@@ -25,8 +25,7 @@ function onProspectTypeChange(){
 
         $('#tag_0').val($('#contact_type').val());
         $('#task_body').val('New '+ $('#contact_type').val());
-
-        alert($('#contact_type').val());
+        
         if($('#contact_type').val() == '<%= ContactUsForm::WEB_SUPPORT -%>'){
             $('#subject_block').show();
             $('#subject').show();
