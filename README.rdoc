@@ -8,6 +8,10 @@ This extension is not registered with the radiant extension site, so you must in
 
 Here is more information on how to install an extension manually: http://github.com/radiant/radiant/wiki/installing-extensions
 
+== DEPENDENCIES:
+
+If you use the optional SYSTEM NOTE feature you will need to to include the 'ruport' gem.
+
 == USAGE:
 
 Once installed you need to set your highrise authentication token and company subdomain.  The extension adds a settings
@@ -63,9 +67,6 @@ What fields and how it is put into highrise is affected by the contact_type para
 <tt><r:highrise-contact task_subject='Please followup'/></tt>
       You can optionally set the task subject by passing task_subject. (Applies only to Support and Lead types.)
 
-<tt><r:highrise-contact system_note="A note that will be added to the contact"/>
-    You can optionally set a note on a support or lead.
-
 <tt><r:highrise-contact show_additional_info='true'/></tt>
     Additional info displays the fields:  street, city, state, zip and country
 
@@ -76,3 +77,19 @@ What fields and how it is put into highrise is affected by the contact_type para
  These will be set either on the person or the address if provided
  <tt><r:highrise-contact tags='Tag1,Tag2'/></tt>
  If you provide tags then the default tags for the contact_type will NOT be set. (The default tag is the same as the contact_type.)
+
+== SYSTEM NOTE
+You can optionally pass a query parameter named 'system_note' that may contain two levels of information.
+This will be lightly formatted and added as an additional note to the highrise contact.
+
+Example URL: url?system_note[os]=Ubuntu&system_note[cpu][id]=Intel64&system_note[cpu][name]=Intel(R) Core(TM) i7 CPU&system_note[cpu][speed]=2673
+
+Formatted Note:
++------------------------------------------------------------------------+
+|        Label         |                      Value                      |
++------------------------------------------------------------------------+
+| Os                   | Ubuntu                                          |
+| Cpu Id               | Intel                                           |
+| Cpu Name             | Intel(R) Core(TM) i7 CPU                        |
+| Cpu Speed            | 2673                                            |
++------------------------------------------------------------------------+

@@ -3,11 +3,11 @@
 function verifyRequired(){
     $("#error_box").empty();
     var validationSuccess = true;
-    jQuery('#contact_type_tag,#subject,#phone,#first_name,#last_name,#email,#message').each( function(index, inputElem) {
+    jQuery('#contact_type,#subject,#phone,#first_name,#last_name,#email,#message').each( function(index, inputElem) {
      try{
         // this == inputElem
         $(this).next().text('');
-        if( $(this).is(':visible') &&  ($(this).val() == "" || $(this).val() == '-Please Select One-')) {
+        if( $(this).is(':visible') && $(this).val() == "") {
            validationSuccess = false;
           $(this).next().text('Missing required field');
         }
@@ -21,9 +21,12 @@ function verifyRequired(){
     return validationSuccess;
 }
 
+<% if contact_type == ContactUsForm::WEB_SELECT_TYPE %>
 function onProspectTypeChange(){
 
-        $('#tag_0').val($('#contact_type').val());
+        if($('#contact_type_tag')){
+            $('#contact_type_tag').val($('#contact_type').val());
+        }
         $('#task_body').val('New '+ $('#contact_type').val());
         
         if($('#contact_type').val() == '<%= ContactUsForm::WEB_SUPPORT -%>'){
@@ -43,11 +46,14 @@ function onProspectTypeChange(){
             $('#additional_info1').hide();
             $('#additional_info2').hide();
         }
-    }       
+    }
+<% end %>
 
 $(document).ready(function(){
-   $('#error_box').hide();
+   $("#error_box").hide();
+<% if contact_type == ContactUsForm::WEB_SELECT_TYPE %>
    onProspectTypeChange();
+<% end %>
 })
 
 </script>

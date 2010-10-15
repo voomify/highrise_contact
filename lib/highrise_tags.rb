@@ -1,3 +1,4 @@
+require "ruport"
 module HighriseTags
   include Radiant::Taggable
 
@@ -13,12 +14,30 @@ module HighriseTags
      :tags=>(tag.attr['tags']||"").split(','),
      :settings=>HighriseSetting.first,
      :show_additional_info=>tag.attr['show_additional_info'],
-     :system_note=>tag.attr['system_note'],
+     :system_note=>format_system_note(params[:sys]||params[:system_note]),
      :return_url=>tag.attr['return_url'],
      :error_url=>tag.attr['error_url'],
      :button_text=>tag.attr['button_text']
     }
   end
+
+  def format_system_note(system)
+    if system
+      table = Table(["Label", "Value"])
+
+      system.keys.each do |key|
+        if(system[key].respond_to? :keys)
+          system[key].keys.each do |subkey|
+            table << ["#{key.humanize} #{subkey.humanize}", system[key][subkey]]
+          end
+        else
+          table << [key.humanize, system[key]]
+        end
+      end
+      table
+    end
+  end
+
 end
 
 # These constants are used by the shared/_contact_form partial

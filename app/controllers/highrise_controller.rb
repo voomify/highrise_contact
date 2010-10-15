@@ -6,14 +6,6 @@ class HighriseController < SiteController
   KASE = "Kase"
 
 
-  #
-  # This entry point is called by the product. The form has system information added to it.
-  # We create the case and then add the system note.
-  #
-  def create_in_product
-    create{|note_subject, kase_id| add_system_note(note_subject, kase_id)}
-  end
-
   def settings
     HighriseSetting.first
   end
@@ -111,4 +103,5 @@ private
         end
       end
   end
+
 end

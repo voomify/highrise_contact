@@ -36,7 +36,6 @@ module Highrise
   
   
   class Base < ActiveResource::Base
-    self.site = ENV['SITE']
 
     def self.descendants
       ObjectSpace.each_object(Class).select { |klass| klass < self }
@@ -59,16 +58,15 @@ module Highrise
       Task.find(:all, :from => "/#{self.class.collection_name}/#{id}/tasks.xml")
     end
 
-    def curl
+    def curl?
       @@curl
     end
 
-    def tag!(tag_name)      
-      res = nil
-      if curl
-        res = `curl -s -d 'name=#{tag_name}' #{ENV['SITE']}parties/#{id}/tags`
+    def tag!(tag_name)
+      if curl?
+        res = `curl -s -d 'name=#{tag_name}' #{Subject.site}parties/#{id}/tags`
       else
-        res = Net::HTTP.post_form(URI.parse("#{ENV['SITE']}parties/#{id}/tags"),
+        res = Net::HTTP.post_form(URI.parse("#{Subject.site}parties/#{id}/tags"),
                                           {'name'=>"#{tag_name}"})
       end
       res
