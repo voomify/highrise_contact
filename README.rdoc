@@ -37,11 +37,6 @@ What fields and how it is put into highrise is affected by the contact_type para
       If the users chooses Prospective Customer then then it will behave as 'Web Lead' below.
       Note: You can not set the task subject when you chose this contact type.
 
-<tt><r:highrise-contact contact_type='Web Support' /></tt>
-      This causes the form to create a web support case and a task on the case
-      This will create highrise case with the description as a note on the case and a task for the case
-      The contact will be tagged 'Web Support'
-
 <tt><r:highrise-contact contact_type='Web Lead' /></tt>
       This causes the form to create a web lead and a task on the person or address if provided
       This will create highrise note on the contact and a task for the contact.
